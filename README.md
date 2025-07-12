@@ -1,6 +1,6 @@
 # IonoBench
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/AnonPaperReview/DemoRepo/blob/main/tutorial/colab_version.ipynb?flush_cache=true)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Mert-chan/IonoBench/blob/main/tutorial/colab_version.ipynb?flush_cache=true)
 [![Hugging Face Dataset](https://img.shields.io/badge/HF%20Datasets-IonoBenchv-blue?logo=huggingface)](https://huggingface.co/datasets/Mertjhan/IonoBench)
 [![Hugging Face Models](https://img.shields.io/badge/HF%20Models-IonoBenchv-blue?logo=huggingface)](https://huggingface.co/Mertjhan/IonoBench)
 
