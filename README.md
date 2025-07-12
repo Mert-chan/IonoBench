@@ -1,8 +1,8 @@
 # IonoBench
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/AnonPaperReview/DemoRepo/blob/main/tutorial/colab_version.ipynb?flush_cache=true)
-[![Hugging Face Dataset](https://img.shields.io/badge/HF%20Datasets-IonoBenchv1-blue?logo=huggingface)](https://huggingface.co/datasets/Mertjhan/IonoBench)
-[![Hugging Face Models](https://img.shields.io/badge/HF%20Models-IonoBenchv1-blue?logo=huggingface)](https://huggingface.co/Mertjhan/IonoBench)
+[![Hugging Face Dataset](https://img.shields.io/badge/HF%20Datasets-IonoBenchv-blue?logo=huggingface)](https://huggingface.co/datasets/Mertjhan/IonoBench)
+[![Hugging Face Models](https://img.shields.io/badge/HF%20Models-IonoBenchv-blue?logo=huggingface)](https://huggingface.co/Mertjhan/IonoBench)
 
 **IonoBench**: Evaluating Spatiotemporal Models for Ionospheric Forecasting under Solar-Balanced and Storm-Aware Conditions  
 *Accepted in Remote Sensing (MDPI), Special Issue on Ionosphere and Space Weather*
@@ -56,6 +56,3 @@ pip install -r requirements.txt
 This environment uses `torch==2.5.1`, which requires a compatible CUDA build.  
 PyTorch provides separate wheels for each CUDA version (e.g., `+cu118`, `+cu121`, `+cu124`).  
 Make sure your NVIDIA driver supports the CUDA version included in the installed wheel.  
-
-To install the correct version, refer to the official selector:  
-https://pytorch.org/get-started/locally/
