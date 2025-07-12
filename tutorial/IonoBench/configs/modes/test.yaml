@@ -1,0 +1,6 @@
+mode: test        
+
+test:
+  save_results:   true
+  save_raw:      false
+  checkpoint:     null      # user gonna supply with CLI:  test.checkpoint=/path/model.pth

@@ -384,7 +384,7 @@ def download_dataset(dataset_name, base_path=None):
     data_path = base_path / "datasets"
     data_path.mkdir(parents=True, exist_ok=True)
 
-    repo_id = "Mertjhan/IonoBenchv1"
+    repo_id = "Mertjhan/IonoBench"
     dataset_file = f"IonoBench_{dataset_name}Split.pickle"
     omni_file = "OMNI_data_1996to2024.txt"
 
@@ -401,7 +401,7 @@ def download_dataset(dataset_name, base_path=None):
 
 ##############################################################################################################
 def download_model_folder(model_name, base_path=None):
-    repo_id = "Mertjhan/IonoBenchv1"
+    repo_id = "Mertjhan/IonoBench"
     subfolder = f"training_sessions/{model_name}"
     if base_path is None:
         base_path = Path().resolve().parents[0]

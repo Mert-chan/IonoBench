@@ -1,0 +1,23 @@
+model:
+  name: SimVPv2
+  input_shape: [12, 18, 72, 72]
+  hid_S: 16
+  hid_T: 256
+  N_S: 4
+  N_T: 4
+  model_type: gSTA
+  mlp_ratio: 8.0
+  drop: 0.0
+  drop_path: 0.0
+  spatio_kernel_enc: 3
+  spatio_kernel_dec: 3
+  conv_in_channels: 18
+  conv_out_channels: 1
+  conv_kernel_size: [1, 1, 1]
+  conv_stride: [1, 1, 1]
+
+train:            # Good to have different settings for specific models (This overrides the base config)
+  batch_size: 128
+
+test:
+  batch_size: 128

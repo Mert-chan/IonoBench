@@ -1,0 +1,16 @@
+# IonoBench Requirements for Colab
+numpy
+torch
+torchvision
+torchinfo
+pytorch-warmup
+tqdm
+scikit-learn
+plotly
+huggingface-hub
+filelock
+scikit-image
+matplotlib
+ipython
+cartopy
+omegaconf 

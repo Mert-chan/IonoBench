@@ -1,0 +1,55 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Virtual environments
+.env/
+.venv/
+env/
+venv/
+ionobench_test/
+
+# VSCode settings
+.vscode/
+
+# Colab system files
+*.ipynb~ 
+
+# Python cache
+*.pyo
+*.pyd
+*.pyc
+
+# Data & model outputs
+datasets/
+training_sessions/
+*.ckpt
+*.pt
+*.pth
+*.npz
+*.npy
+*.h5
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and metadata
+*.log
+*.sqlite
+*.db
+
+# Token / secrets (don't forget to check git history for leaked secrets)
+token.json
+*.env
+*.secret
+
+# Ignore Hugging Face cache
+~/.cache/huggingface/
+
+# Ignore test artifacts
+test_output/
