@@ -9,10 +9,9 @@
 
 ---
 
-**IonoBench** is a benchmark framework for evaluating deep spatiotemporal models on ionospheric Total Electron Content (TEC) forecasting.  
+**IonoBench** is a benchmark framework for evaluating deep spatiotemporal models on global Total Electron Content (TEC) forecasting.  
 It includes standardized datasets, evaluation protocols, pretrained models, and configuration-based experimentation.
-
-This repository provides the full IonoBench framework (under development).  
+  
 Click **Open in Colab** to test without local setup.
 
 ---
