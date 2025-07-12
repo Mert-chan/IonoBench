@@ -1,0 +1,14 @@
+
+defaults:         # default config for solar mode
+  - test
+  - data
+
+data:
+  omni_file: "OMNI_data_1996to2024.txt"   # needed by make_solar_loaders
+
+mode: solar            
+
+solar:
+  classes:        [very_weak, weak, moderate, intense]     # SI categories
+  log_same_file:  true   # append to latest testing_info_*.txt
+

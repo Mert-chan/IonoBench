@@ -1,0 +1,12 @@
+model:
+  name: DCNN121
+  input_shape: [12, 1, 72, 72]        # [T_in, C, H, W]
+  pred_horz: 12                       # T_out
+  seq_len: 12                         # T_in
+  num_features: 32                   # e.g. 18 OMNI + TEC map channels
+  total_T: Null                      # Total time = seq_len + pred_horz
+train:            # Good to have different settings for specific models (This overrides the base config)
+  batch_size: 16
+
+test:
+  batch_size: 16

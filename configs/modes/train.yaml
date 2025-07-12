@@ -1,0 +1,11 @@
+mode: train            # your runner will call run_training(cfg)
+
+train:
+  lr:             8e-5
+  epochs:         50
+  early_stop:     10
+  criterion:      MSELoss
+  optimizer:      Adam
+  scheduler:      ReduceLROnPlateau
+  mixed_precision: false
+  resume: null         # path/to/checkpoint.pth  or null for fresh run

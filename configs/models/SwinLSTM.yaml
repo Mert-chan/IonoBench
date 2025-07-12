@@ -1,0 +1,18 @@
+model:
+  name: SwinLSTM
+  input_shape: [12, 1, 72, 72]     # [T_in, C, H, W]
+  pred_horz: 12                    # T_out
+  embed_dim: 128
+  depths: 4
+  num_heads: 4
+  window_size: 4
+  patch_size: 2
+  mlp_ratio: 4.0
+  drop_path_rate: 0.1
+  total_T: null           # total_T = Input sequence length + Prediction horizon automatically
+
+train:
+  batch_size: 16
+
+test:
+  batch_size: 16

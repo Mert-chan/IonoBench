@@ -1,0 +1,37 @@
+session:
+  name: tryout                  # fill from CLI or script
+
+paths:
+  base_dir: null                # will be filled during runtime
+  out_dir: training_sessions    # relative to base_dir
+
+defaults:
+  - model: SimVPv2        # model (SimVPv2, SwinLSTM, DCNN121) 
+  - mode:  train          # mode (LRtest, train, test, solar, storm)
+
+data:
+  seq_len: 12
+  pred_horz: 12
+  batch_size: 16
+  shuffle: false
+  data_split: stratified
+  features: ['F10.7', 'Dst', 'ap', 'AE', 'pc', 'SW Temp', 
+              'SW Density', 'SW Speed', 'SW Long Angle', 
+              'SW Lat Angle', 'Flow Pressure', 'E Field', 
+              'Scalar B', 'BZ (GSM)', 'Year', 'Day of Year', 'Hour']
+
+train:    
+  lr: 8e-5              # This will be overridden by model, mode or CLI settings depending on the hierarchy
+  epochs: 50    
+  early_stop: 10
+  criterion: MSELoss
+  optimizer: Adam
+  scheduler: ReduceLROnPlateau
+
+test:
+  batch_size: 16
+  save_results: true  # Save logged results
+  save_raw: false     # Save raw predictions and labels
+  input_names: null   # After data loading it is set automatically
+  max_tec: null       # After data loading it is set automatically
+  min_tec: null       # After data loading it is set automatically
