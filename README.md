@@ -1,8 +1,8 @@
 # IonoBench
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/AnonPaperReview/DemoRepo/blob/main/tutorial/colab_version.ipynb?flush_cache=true)
-[![Hugging Face Dataset](https://img.shields.io/badge/HF%20Datasets-IonoBenchv1-blue?logo=huggingface)](https://huggingface.co/datasets/Mertjhan/IonoBenchv1)
-[![Hugging Face Models](https://img.shields.io/badge/HF%20Models-IonoBenchv1-blue?logo=huggingface)](https://huggingface.co/Mertjhan/IonoBenchv1)
+[![Hugging Face Dataset](https://img.shields.io/badge/HF%20Datasets-IonoBenchv1-blue?logo=huggingface)](https://huggingface.co/datasets/Mertjhan/IonoBench)
+[![Hugging Face Models](https://img.shields.io/badge/HF%20Models-IonoBenchv1-blue?logo=huggingface)](https://huggingface.co/Mertjhan/IonoBench)
 
 **IonoBench**: Evaluating Spatiotemporal Models for Ionospheric Forecasting under Solar-Balanced and Storm-Aware Conditions  
 *Accepted in Remote Sensing (MDPI), Special Issue on Ionosphere and Space Weather*
