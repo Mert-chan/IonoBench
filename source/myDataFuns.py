@@ -389,7 +389,7 @@ def download_dataset(dataset_name, base_path=None):
     omni_file = "OMNI_data_1996to2024.txt"
 
     for fname in [dataset_file, omni_file]:
-        downloaded = hf_hub_download(repo_id=repo_id, filename=fname, repo_type="dataset")
+        downloaded = hf_hub_download(repo_id=repo_id, filename=fname, repo_type="dataset",token=False)
         dest = data_path / fname
         if not dest.exists():
             shutil.copy(downloaded, dest)
