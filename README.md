@@ -40,7 +40,7 @@ Click **Open in Colab** to test without local setup.
 
 ---
 
-### Local Setup (Python 3.11 + CUDA)
+### Local Setup 
 
 ```bash
 # Clone repository
@@ -59,8 +59,7 @@ conda activate ionobench
 # Install dependencies
 pip install -r requirements.txt
 ```
-
-
+Tested on: Python 3.11.13 + PyTorch 2.5.1 + CUDA 12.4
 This environment uses `torch==2.5.1`, which requires a compatible CUDA build.  
 PyTorch provides separate wheels for each CUDA version (e.g., `+cu118`, `+cu121`, `+cu124`).  
 Make sure your NVIDIA driver supports the CUDA version included in the installed wheel.  
