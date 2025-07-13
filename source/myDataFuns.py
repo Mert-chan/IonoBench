@@ -409,13 +409,13 @@ def download_model_folder(model_name, base_path=None):
     target_path.mkdir(parents=True, exist_ok=True)
 
     # Download the manifest file
-    filelist_path = hf_hub_download(repo_id=repo_id, filename="files.json", subfolder=subfolder, repo_type="model")
+    filelist_path = hf_hub_download(repo_id=repo_id, filename="files.json", subfolder=subfolder, repo_type="model",token=False)
     with open(filelist_path, "r") as f:
         files = json.load(f)
 
     # Download all listed files
     for fname in files:
-        downloaded = hf_hub_download(repo_id=repo_id, filename=fname, subfolder=subfolder, repo_type="model")
+        downloaded = hf_hub_download(repo_id=repo_id, filename=fname, subfolder=subfolder, repo_type="model",token=False)
         dest = target_path / fname
         if not dest.exists():
             shutil.copy(downloaded, dest)

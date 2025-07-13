@@ -53,3 +53,9 @@ token.json
 
 # Ignore test artifacts
 test_output/
+
+# Ignore visuals
+visuals/
+*.gif
+*.mp4
+*.avi
