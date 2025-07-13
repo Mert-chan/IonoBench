@@ -43,6 +43,12 @@ Click **Open in Colab** to test without local setup.
 ### Local Setup (Python 3.11 + CUDA)
 
 ```bash
+# Clone repository
+git clone https://github.com/Mert-chan/IonoBench.git
+
+# Change your directory
+# cd IonoBench
+
 # Create environment
 conda create -n ionobench python=3.11 -y
 conda activate ionobench
