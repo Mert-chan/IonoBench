@@ -33,8 +33,8 @@ Click **Open in Colab** to test without local setup.
 | HF model & data access | Complete    |
 | Model/config registry  | Complete    |
 | Evaluation pipeline    | Complete    |
-| Visualization tools    | In Progress |
-| CLI support            | Planned     |
+| Visualization tools    | Complete    |
+| CLI support            | In Progress |
 | Training tutorials     | Planned     |
 | Contributor guide      | Planned     |
 
