@@ -45,18 +45,21 @@ Click **Open in Colab** to test without local setup.
 ```bash
 # Clone repository
 git clone https://github.com/Mert-chan/IonoBench.git
-
+```
+```base
 # Change your directory
 cd IonoBench
-
+```
+```bash
 # Create environment
 conda create -n ionobench python=3.11 -y
 conda activate ionobench
-
+```
+```bash
 # Install dependencies
 pip install -r requirements.txt
-
 ```
+
 
 This environment uses `torch==2.5.1`, which requires a compatible CUDA build.  
 PyTorch provides separate wheels for each CUDA version (e.g., `+cu118`, `+cu121`, `+cu124`).  
