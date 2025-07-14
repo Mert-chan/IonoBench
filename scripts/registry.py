@@ -1,18 +1,24 @@
+#####################################################################
 """
 registry.py
 @ Mert-chan 
-@ 16 Feb 2025
+13 July 2025 (Last Modified)
 Registry for model classes in the IonoBench project.
 - Automatically imports all model files in the source/models directory.
 - Provides a decorator to register models.
 - Allows building models from a configuration object.
 - Supports device specification for model instantiation.
 """
+#####################################################################
 
+# Libraries
+#===================================================================
 from __future__ import annotations
 from typing import Dict, Type
 import importlib, pkgutil, pathlib
 import torch.nn as nn
+#===================================================================
+
 
 # 1. Registry dictionary and decorator
 #=======================================================================
@@ -51,14 +57,14 @@ def auto_import_models(base_path: pathlib.Path):
         importlib.import_module(f"{pkg_name}.{module_info.name}")
 #========================================================================
 
-
 # 3. Public helper to build the network
 #=======================================================================
 def build_model(cfg, base_path: str | pathlib.Path, device: str = "cpu"):
     """
-    cfg: Configuration object or dictionary containing model parameters.
-    base_path: Path to the project root directory, where the source/models directory is located.
-    device: Device to which the model should be moved (default is "cpu").
+    inputs:
+        cfg: Configuration object or dictionary containing model parameters.
+        base_path: Path to the project root directory, where the source/models directory is located.
+        device: Device to which the model should be moved (default is "cpu").
     Returns:
         An instance of the model class specified in the configuration.
     """

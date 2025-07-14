@@ -1,25 +1,33 @@
+#####################################################################
 """
-data.py
+loadConfigs.py
 @ Mert-chan 
-@ 16 Feb 2025
+@ 13 July 2025 (Last Modified)  
 - Loads Configurations from a YAML file
 - Uses OmegaConf for configuration management
 """
+#####################################################################
 
+# Libs
+#==================================================================
 from pathlib import Path
 from typing import Union, Dict
 from omegaconf import OmegaConf, DictConfig
 import os
+#==================================================================
 
-_CFG_ROOT = Path(__file__).resolve().parent / "configs"     # adapt if needed
+# _CFG_ROOT = Path(__file__).resolve().parent / "configs"     # For Future CLI overrides
 
-
+# Load yaml files
+#==================================================================
 def _load_yaml(path: Path) -> DictConfig:
     if not path.exists():
         raise FileNotFoundError(f"Config not found: {path}")
     return OmegaConf.load(path)
+#==================================================================
 
-
+# Load configurations
+#===================================================================
 def load_configs(model: str = "SimVPv2",
                  mode:  str = "train",
                  split: str = "stratified",         # or "chronological"
@@ -52,3 +60,4 @@ def load_configs(model: str = "SimVPv2",
         print(f"Warning: Could not auto-calculate total_T: {e}")
 
     return OmegaConf.to_container(merged, resolve=True) if as_dict else merged
+#===================================================================

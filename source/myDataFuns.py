@@ -1,25 +1,28 @@
 
-#####################################################################
+
+#############################################################
 """
-data.py
-Mert-chan 13 Feb 2025
-- Functions for general purposes
-- OMNI data
-- date lists
-- Solar Intensity categorization
-- storm information
+myDataFuns.py
+@ Mert-chan 
+@ 13 July 2025 (Last Modified)  
+- Functions for general data preprocessing purposes
 """
-#####################################################################
-# from myVisualFuns import *
+#############################################################
+
+# Libs
+#===================================================================
 import numpy as np
 from datetime import datetime, timedelta
 from pathlib import Path
 import shutil, os, json
 from huggingface_hub import hf_hub_download
-LAT = 72
-LONG = 72
+#===================================================================
 
-############################################################################################################
+LAT = 72       
+LONG = 72       
+
+# Function to generate a list of dates with a specific delta (Usually 2 hours for GIMs)
+#===================================================================
 def dateList(start, end,delta):
     dates = []
     i = 0   
@@ -27,9 +30,142 @@ def dateList(start, end,delta):
         dates.append(start)
         start = start + delta
     return dates
-############################################################################################################
+#===================================================================
 
-#############################################################
+# Reverse heliocentric transformation
+#===================================================================
+def reverseHeliocentricSingle(tec, date):
+    n = tec.shape[1]
+    mapNumber = int(date.hour) // 2 + 1
+    shift_value = (n * mapNumber / 12 + n / 2)
+    return np.roll(tec, -int(shift_value), axis=1)
+#===================================================================
+
+# Reverse heliocentric transformation for a list of dates
+#===================================================================
+def reverseHeliocentric(tecData, date_list):
+    # Check if tecData is a numpy array
+    if not isinstance(tecData, np.ndarray):
+        raise ValueError("tecData must be a numpy array")
+
+    # Check if date_list is a list of datetime objects
+    if not all(isinstance(date, datetime) for date in date_list):
+        raise ValueError("date_list must be a list of datetime objects")
+    # Reverse the heliocentric transformation for each date in the list
+    tecData = np.array([reverseHeliocentricSingle(tecData[idx], date_list[idx]) for idx in range(len(date_list))])
+    return tecData
+#===================================================================
+
+
+# Function to categorize solar intensity based on F10.7 index
+#===================================================================
+def SI_categorize(allDATES, desiredDates, OMNI_path, verbose=False):
+    """
+    Inputs:
+        allDATES (_type_): _list of datetime objects of whole dataset of IonoBench (1 Jan 2000 - 11 September 2024)
+        desiredDates (_type_): _list of datetime objects of the dates you want to categorize (Usually the dates of the test set)
+        OMNI_path (_type_): _path to the OMNI data file (e.g., "OMNI_data_1996to2024.txt")
+        verbose (bool, optional): If True, prints all information the processes. Defaults to False.
+
+    Returns:
+        dict: A dictionary categorizing the dates based on F10.7 index into "Very Weak", "Weak", "Moderate", and "Intense".
+    """
+    # Optimize this: Current issue without adding all dates misclassification can occur.
+    import numpy as np
+    # Load OMNI
+    indices = List_OMNI_Indices(OMNI_path,verbose)
+    Unwanted = []   # Pick the ones you don't want with the same name as the output of List_OMNI_Indices. If not empty array. 
+    indexMatrix = [0 if col in Unwanted else 1 for col in indices]  # Forming a binary matrix for the desired indices.
+    OMNI_df = final_OMNI_datav2(OMNI_path, indices, indexMatrix, allDATES,verbose)
+    OMNI_df['Dates'] = allDATES
+    # Solar Intensity Categories
+    f107_categories = {
+        "Very Weak": (0, 70),
+        "Weak": (70, 100),
+        "Moderate": (100, 150),
+        "Intense": (150, np.inf)
+    }
+
+    # Map dates to F10.7
+    date_to_f107 = dict(zip(OMNI_df['Dates'], OMNI_df['F10.7']))
+    
+    # Function to classify dates based on F10.7
+    def classify_dates(dates):
+        categorized = {cat: [] for cat in f107_categories}
+        for date in dates:
+            if date in date_to_f107:
+                f107_value = date_to_f107[date]
+                for cat, (low, high) in f107_categories.items():
+                    if low < f107_value <= high:
+                        categorized[cat].append(date)
+                        break
+        return {cat: categorized[cat] for cat in f107_categories}
+    
+    return classify_dates(desiredDates)
+#===================================================================
+
+# Function to download the IonoBench dataset from Hugging Face
+#===================================================================
+def download_dataset(dataset_name, base_path=None):
+    assert dataset_name in ["stratified", "chronological"], "Choose either 'stratified' or 'chronological'"
+    if base_path is None:
+        base_path = Path().resolve().parents[0]
+    data_path = base_path / "datasets"
+    data_path.mkdir(parents=True, exist_ok=True)
+
+    repo_id = "Mertjhan/IonoBench"
+    dataset_file = f"IonoBench_{dataset_name}Split.pickle"
+    omni_file = "OMNI_data_1996to2024.txt"
+
+    for fname in [dataset_file, omni_file]:
+        downloaded = hf_hub_download(repo_id=repo_id, filename=fname, repo_type="dataset",token=False)
+        dest = data_path / fname
+        if not dest.exists():
+            shutil.copy(downloaded, dest)
+            os.remove(downloaded)
+            print(f"{fname} downloaded to {dest}")
+        else:
+            print(f"{fname} already exists. Skipping.")
+#===================================================================
+
+# Function to download a model folder from Hugging Face
+#===================================================================
+def download_model_folder(model_name, base_path=None):
+    repo_id = "Mertjhan/IonoBench"
+    subfolder = f"training_sessions/{model_name}"
+    if base_path is None:
+        base_path = Path().resolve().parents[0]
+    target_path = base_path / "training_sessions" / model_name
+    target_path.mkdir(parents=True, exist_ok=True)
+
+    # Download the manifest file
+    filelist_path = hf_hub_download(repo_id=repo_id, filename="files.json", subfolder=subfolder, repo_type="model",token=False)
+    with open(filelist_path, "r") as f:
+        files = json.load(f)
+
+    # Download all listed files
+    for fname in files:
+        downloaded = hf_hub_download(repo_id=repo_id, filename=fname, subfolder=subfolder, repo_type="model",token=False)
+        dest = target_path / fname
+        if not dest.exists():
+            shutil.copy(downloaded, dest)
+            os.remove(downloaded)
+        else:
+            print(f"{fname} already exists. Skipping.")
+    print(f"Please check the {target_path} folder for the downloaded files.")
+#===================================================================
+
+# Function to get a specific OMNI feature by name
+#===================================================================
+def getOMNIfeature(dataDict, feature_name):
+    dataDict['OMNI_index'] = {name: i for i, name in enumerate(dataDict['OMNI_names'])}
+    idx = dataDict['OMNI_index'][feature_name]
+    return dataDict['normOMNI'][:, idx]
+#===================================================================
+
+
+# Function to list OMNI indices from a file
+#===================================================================
 def List_OMNI_Indices(OMNI_path, verbose=True):
 #############################################################
     # Function Explanation
@@ -69,9 +205,10 @@ def List_OMNI_Indices(OMNI_path, verbose=True):
         print(indices)
     return indices
     #===============================================================================
-#############################################################
+#===================================================================
 
-#############################################################
+# Function to impute missing values in OMNI data
+#===================================================================
 def OMNI_impute_advanced(OMNI_df):
     # Example usage
     # Checks the special missing data headers on the OMNIweb data 
@@ -132,26 +269,34 @@ def OMNI_impute_advanced(OMNI_df):
                     OMNI_df.at[i, col] = np.random.normal(mean_val, std_val)
                     
     return OMNI_df
-##############################################################
+#===================================================================
 
-###################################################################
+# Function to group OMNI data into auxiliary categories described similar in the paper
+#===================================================================
 def group_OMNI_data(OMNI_data):
  # Define the categories and their respective columns
-    time_idx = [
+    # Time Features
+    time_idx = [                    
         'YEAR', 'DOY', 'HR', 'HR_sin', 'DoY_sin'
     ]
+    # Solar Activity Indices
     solar_idx = [
         'R (Sunspot No.)', 'f10.7_index', 'Lyman_alpha'
     ]
+    # Geomagnetic Indices
     geomagnetic_idx = [
         'Kp index', 'Dst-index, nT', 'ap_index, nT', 'AE-index, nT', 'AL-index, nT', 'AU-index, nT', 'pc-index'
     ]
+    # Solar Wind Parameters
     plasma_parameters = [
         'SW Plasma Temperature, K', 'SW Proton Density, N/cm^3', 'SW Plasma Speed, km/s', 'SW Plasma flow long. angle',
         'SW Plasma flow lat. angle', 'Alpha/Prot. ratio', 'sigma-T, K', 'sigma-n, N/cm^3', 'sigma-V, km/s',
         'sigma-phi V, degrees', 'sigma-theta V, degrees', 'sigma-ratio'
     ]
+    # Derived Parameters
     derived_parameters = ['Flow pressure','E elecrtric field','Alfen mach number']
+    
+    # Interplanetary Magnetic Field (IMF) Parameters
     imf_parameters = [
         'Scalar B, nT', 'Vector B Magnitude,nT', 'Lat. Angle of B (GSE)', 'Long. Angle of B (GSE)', 'BX, nT (GSE, GSM)',
         'BY, nT (GSE)', 'BZ, nT (GSE)', 'BY, nT (GSM)', 'BZ, nT (GSM)','RMS_magnitude, nT', 'RMS_field_vector, nT', 'RMS_BX_GSE, nT',
@@ -216,9 +361,10 @@ def group_OMNI_data(OMNI_data):
     }
 
     return df_reordered.rename(columns=column_name_mapping)  # Apply the name changes to the DataFrame columns
-###################################################################
+#===================================================================
 
-#############################################################
+# Function to parse the OMNI data from txt file and return a DataFrame with selected indices
+#===================================================================
 def final_OMNI_datav2(OMNI_path, indices, indexMatrix, dates, verbose=True):
     # Function Explanation
     #===============================================================================
@@ -271,10 +417,10 @@ def final_OMNI_datav2(OMNI_path, indices, indexMatrix, dates, verbose=True):
     OMNI_df = group_OMNI_data(OMNI_df)
     return OMNI_df
     #===============================================================================
-#############################################################
+#===================================================================
 
-# Function to read the OMNI data
-############################################################################################################
+# Function to read the OMNI data as sequence for the TECspatiotemporalLoader => myTrainFuns.py
+#===================================================================
 def readOMNIseq(DATES,d,seq_len,pred_horz, OMNIdata, lat = LAT, long = LONG):
     #############################################################
     # Function Explanation
@@ -306,128 +452,4 @@ def readOMNIseq(DATES,d,seq_len,pred_horz, OMNIdata, lat = LAT, long = LONG):
             # sanitycheck = DATES[(DATES.index(d) - (seq_len-1)) : (DATES.index(d) + 1)]
     #===============================================================================
     return omni2d
-#############################################################################################################
-
-
-# Reverse heliocentric transformation
-###############################################################################################################
-def reverseHeliocentricSingle(tec, date):
-    n = tec.shape[1]
-    mapNumber = int(date.hour) // 2 + 1
-    shift_value = (n * mapNumber / 12 + n / 2)
-    return np.roll(tec, -int(shift_value), axis=1)
-###############################################################################################################
-
-#################################################################################################################
-def reverseHeliocentric(tecData, date_list):
-    # Function to reverse the heliocentric transformation for a list of dates
-    # tecData: 3D array of TEC data
-    # date_list: list of datetime objects corresponding to the TEC data
-    # Returns: 3D array of TEC data with the heliocentric transformation reversed
-
-    # Check if tecData is a numpy array
-    if not isinstance(tecData, np.ndarray):
-        raise ValueError("tecData must be a numpy array")
-
-    # Check if date_list is a list of datetime objects
-    if not all(isinstance(date, datetime) for date in date_list):
-        raise ValueError("date_list must be a list of datetime objects")
-    # Reverse the heliocentric transformation for each date in the list
-    tecData = np.array([reverseHeliocentricSingle(tecData[idx], date_list[idx]) for idx in range(len(date_list))])
-    return tecData
-#################################################################################################################
-
-
-#############################################################################################################
-def SI_categorize(allDATES, desiredDates, OMNI_path, verbose=False):
-    # Optimize this: Current issue without adding all dates misclassification can occur.
-    import numpy as np
-    # Load OMNI
-    indices = List_OMNI_Indices(OMNI_path,verbose)
-    Unwanted = []   # Pick the ones you don't want with the same name as the output of List_OMNI_Indices. If not empty array. 
-    indexMatrix = [0 if col in Unwanted else 1 for col in indices]  # Forming a binary matrix for the desired indices.
-    OMNI_df = final_OMNI_datav2(OMNI_path, indices, indexMatrix, allDATES,verbose)
-    OMNI_df['Dates'] = allDATES
-    # Solar Intensity Categories
-    f107_categories = {
-        "Very Weak": (0, 70),
-        "Weak": (70, 100),
-        "Moderate": (100, 150),
-        "Intense": (150, np.inf)
-    }
-
-    # Map dates to F10.7
-    date_to_f107 = dict(zip(OMNI_df['Dates'], OMNI_df['F10.7']))
-    
-    # Function to classify dates based on F10.7
-    def classify_dates(dates):
-        categorized = {cat: [] for cat in f107_categories}
-        for date in dates:
-            if date in date_to_f107:
-                f107_value = date_to_f107[date]
-                for cat, (low, high) in f107_categories.items():
-                    if low < f107_value <= high:
-                        categorized[cat].append(date)
-                        break
-        return {cat: categorized[cat] for cat in f107_categories}
-    
-    return classify_dates(desiredDates)
-#############################################################################################################
-
-
-###############################################################################################################
-def download_dataset(dataset_name, base_path=None):
-
-    assert dataset_name in ["stratified", "chronological"], "Choose either 'stratified' or 'chronological'"
-    if base_path is None:
-        base_path = Path().resolve().parents[0]
-    data_path = base_path / "datasets"
-    data_path.mkdir(parents=True, exist_ok=True)
-
-    repo_id = "Mertjhan/IonoBench"
-    dataset_file = f"IonoBench_{dataset_name}Split.pickle"
-    omni_file = "OMNI_data_1996to2024.txt"
-
-    for fname in [dataset_file, omni_file]:
-        downloaded = hf_hub_download(repo_id=repo_id, filename=fname, repo_type="dataset",token=False)
-        dest = data_path / fname
-        if not dest.exists():
-            shutil.copy(downloaded, dest)
-            os.remove(downloaded)
-            print(f"{fname} downloaded to {dest}")
-        else:
-            print(f"{fname} already exists. Skipping.")
-###############################################################################################################
-
-##############################################################################################################
-def download_model_folder(model_name, base_path=None):
-    repo_id = "Mertjhan/IonoBench"
-    subfolder = f"training_sessions/{model_name}"
-    if base_path is None:
-        base_path = Path().resolve().parents[0]
-    target_path = base_path / "training_sessions" / model_name
-    target_path.mkdir(parents=True, exist_ok=True)
-
-    # Download the manifest file
-    filelist_path = hf_hub_download(repo_id=repo_id, filename="files.json", subfolder=subfolder, repo_type="model",token=False)
-    with open(filelist_path, "r") as f:
-        files = json.load(f)
-
-    # Download all listed files
-    for fname in files:
-        downloaded = hf_hub_download(repo_id=repo_id, filename=fname, subfolder=subfolder, repo_type="model",token=False)
-        dest = target_path / fname
-        if not dest.exists():
-            shutil.copy(downloaded, dest)
-            os.remove(downloaded)
-        else:
-            print(f"{fname} already exists. Skipping.")
-    print(f"Please check the {target_path} folder for the downloaded files.")
-##############################################################################################################
-
-###############################################################################################################
-def getOMNIfeature(dataDict, feature_name):
-    dataDict['OMNI_index'] = {name: i for i, name in enumerate(dataDict['OMNI_names'])}
-    idx = dataDict['OMNI_index'][feature_name]
-    return dataDict['normOMNI'][:, idx]
-###############################################################################################################
+#===================================================================

@@ -1,20 +1,32 @@
+#####################################################################
+"""
+DCNN121.py          # Little discrepency in the file name sorry for that. Originally it is dcnn121 from Boulch et al. (2018)
+@ Mert-chan 
+13 July 2025 (Last Modified)
+- Dilated Convolutional Neural Network (DCNN) model. Code adapted from https://github.com/aboulch/tec_prediction
+- Implements the DCNN121 architecture as raw model from Boulch et al. (2018)
+- Includes modifications for IonoBench's input/output format, scheduled teacher forcing, and autoregressive prediction with every step saved for loss calculation.
+- Modifications are notted as comments in the code
+"""
+#####################################################################
 
-
+# Libraries
+#==================================================================
 import torch.nn as nn
 from torch.autograd import Variable
 import torch
 import torch.nn.functional as F
 from source.myTrainFuns import seedME
 from scripts.registry import register_model
-''' DNN221 Model from Boulch et al. (2018) 
-Code adapted from https://github.com/aboulch/tec_prediction
-This is the raw model.
-Training does not use residual learning mentioned in the paper. (TO DO)
-Last Update: 2 March 2025
-'''
+#==================================================================
+
+
 seedME(3)  # Seed everything for reproducibility
-@register_model("DCNN121")
+@register_model("DCNN121")      # Register the model with the name "DCNN121"
+
+
 # Wrapper class for the DNN211 model to adapt IonoBench's input/output format
+#==================================================================
 class DCNN121(nn.Module):
     def __init__(self, configs):
         super(DCNN121, self).__init__()
@@ -22,7 +34,7 @@ class DCNN121(nn.Module):
         T_in, C, H, W = configs.input_shape
         self.base_model = UnetConvRecurrent(input_nbr=C, num_features=configs.num_features)  # Base model
         self.seq_input_length = configs.seq_len  # Input sequence length
-        self.criterion = nn.MSELoss()  # Loss function
+        self.criterion = nn.MSELoss()               # Loss function
         self.conv_out = nn.Conv3d(in_channels=C,out_channels=1,kernel_size=(1, 1, 1),stride=1,padding=0)    # Extra conv3d to reduce the channel dimension (e.g. 18) to 1
         
     def forward(self, inputMaps, truthMaps):
@@ -31,18 +43,20 @@ class DCNN121(nn.Module):
         inputMaps = inputMaps.permute(0, 2, 1, 3, 4).contiguous()   # [B, C, T, H, W] -> [B, T, C, H, W]
 
         nextFrames = self.base_model.forward(inputMaps, self.configs.pred_horz, diff=False, predict_diff_data=None)
-        nextFrames = nextFrames.permute(0, 2, 1, 3, 4).contiguous()      # [B, T, C, H, W] -> [B, C, T, H, W]  # Permute for Convolutions layer 
+        nextFrames = nextFrames.permute(0, 2, 1, 3, 4).contiguous()                     # [B, T, C, H, W] -> [B, C, T, H, W]  # Permute for Convolutions layer 
         nextFrames = self.conv_out(nextFrames).permute(0, 2, 1, 3, 4).contiguous()      # [B, C, T, H, W] -> [B, T, C, H, W]
         
-        allMaps = torch.cat((inputMaps[:,:,0,:,:], truthMaps), dim=1)  # [B, total_T, C, H, W] # Concatenate the input GIM (first channel) with the ground truth maps
-        loss_allMaps = self.criterion(nextFrames.squeeze(2), allMaps[:, 1:])  # Calculate loss for all steps to asses the overall performance
-        predictedFrames = nextFrames[:, T - 1:].squeeze(2)  # [B, total_T-1, C, H, W] => [B, T_out, H, W]
+        allMaps = torch.cat((inputMaps[:,:,0,:,:], truthMaps), dim=1)                   # [B, total_T, C, H, W] # Concatenate the input GIM (first channel) with the ground truth maps
+        loss_allMaps = self.criterion(nextFrames.squeeze(2), allMaps[:, 1:])            # Calculate loss for all steps to asses the overall performance
+        predictedFrames = nextFrames[:, T - 1:].squeeze(2)                              # [B, total_T-1, C, H, W] => [B, T_out, H, W]
         
         return predictedFrames, loss_allMaps
+#==================================================================
 
-
+# Slight modification to output every steps prediction instead of just the `prediction_len` to calculate the loss for each step
+#==================================================================
 class UnetConvRecurrent(nn.Module):
-    # Slight modification to output every steps prediction instead of just the `prediction_len` to calculate the loss for each step
+    
     def __init__(self, input_nbr, num_features=8):
         super(UnetConvRecurrent, self).__init__()
         kernel_size = 3
@@ -50,6 +64,7 @@ class UnetConvRecurrent(nn.Module):
         self.convRecurrentCell2 = CLSTM_cell(num_features, num_features, kernel_size, dilation=2, padding=2)
         self.convRecurrentCell3 = CLSTM_cell(num_features, input_nbr, kernel_size, dilation=1, padding=1)
 
+    # This modification allows model to have scheduled teacher forcing where first stage strictly follows the input sequence and then autoregressively predicts the remaining frames.
     def forward(self, z, prediction_len, diff=False, predict_diff_data=None):
         # z is assumed to be in sequence-first order: [B, T_in, C, H, W]  
         z = z.permute(1, 0, 2, 3, 4).contiguous()  # [T_in, B, C, H, W]
@@ -58,7 +73,7 @@ class UnetConvRecurrent(nn.Module):
 
         # Initialize hidden states for each recurrent cell
         hidden_state1, hidden_state2, hidden_state3 = None, None, None
-        # --- Stage 1: Process the input sequence (all T_in frames) ---
+        # Stage 1: Process the input sequence (all T_in frames)
         # Instead of only saving the last output, save all intermediate outputs.
         for t in range(seq_len):
             x = z[t]  # [B, C, H, W]
@@ -72,9 +87,9 @@ class UnetConvRecurrent(nn.Module):
             x3 = hidden_state3[0]
             y = x3  # output at time t
             
-            output_inner.append(y)  # Save every output             (Modification)
+            output_inner.append(y)  # Save every output (Modification)
 
-        # --- Stage 2: Autoregressive prediction loop ---
+        # Stage 2: Autoregressive prediction loop
         # Use the last output as a starting point and generate remaining frames.
         x = z[:, -1]  # Last frame of the input sequence
         for t in range(prediction_len - 1):
@@ -99,9 +114,11 @@ class UnetConvRecurrent(nn.Module):
         # For comprehensive loss, you might want to compare against all frames. Thus modification makes sure all frames are returned.
         current_output = torch.stack(output_inner, dim=0)         # Stack along new time dimension.         # Expected shape: [T_total, B, C, H, W]
         return current_output.permute(1,0,2,3,4).contiguous()  # [T_total, B, C, H, W] => [B, T_total, C, H, W]
-    
+    #==================================================================
     
 
+# Little modification to make it device-agnostic (Old version would cause error on Multi-GPU machines when any other GPU selected than 0)
+#==================================================================
 class CLSTM_cell(nn.Module):
 
     def __init__(self, input_size, hidden_size, kernel_size,dilation=1, padding=None):
@@ -149,4 +166,4 @@ class CLSTM_cell(nn.Module):
         next_c = f*c+i*g
         next_h = o*torch.tanh(next_c)
         return next_h, next_c
-    
+#==================================================================

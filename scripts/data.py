@@ -1,13 +1,11 @@
-# ReadMe
-#=========================================================================
+#####################################################################
 """
 data.py
-Mert-chan 16 Feb 2025
-- Loads training data from a pickle file
-- Returns a dictionary necessary to run the main scripts
-- Controls the data split
+@ Mert-chan 
+@ 13 July 2025 (Last Modified)  
+- Function load training data and prepare data loaders of different modes of IonoBench
 """
-#=========================================================================
+#####################################################################
 
 # Libraries
 #========================================================================
@@ -22,7 +20,7 @@ from source.myTrainFuns import TECspatiotemporalLoader
 from datetime import datetime,timedelta
 #========================================================================
 
-# ---- registry so you can plug new experiment loaders later -------------
+# registry so you can plug new experiment loaders later (In development for CLI update)
 DATASET_FACTORY = {}
 
 def register_exp(name):
@@ -206,9 +204,10 @@ def make_solar_loaders(cfg, base_path, d) -> Dict[str, DataLoader]:
     """
     Returns one DataLoader per solar-activity class, using the batch-size
     specified in cfg.test.batch_size.
-
-    cfg  : merged config obj (has .data.seq_len, .data.pred_horz, .test.batch_size)
-    d    : dict returned by prepare_raw()  (contains dates, normTEC, normOMNI …)
+    Inputs
+        cfg  : merged config obj (has .data.seq_len, .data.pred_horz, .test.batch_size)
+        base_path: base path of the project (used to load OMNI data)
+        d    : dict returned by prepare_raw()  (contains dates, normTEC, normOMNI …)
     """
     # 1 - Build the class → index list mapping
     from source.myDataFuns import SI_categorize          # already in your repo
@@ -256,7 +255,7 @@ def make_storm_loaders(cfg: dict, d: dict) -> dict:
 
     This serves as the data preparation step for the StormAnalysis class.
 
-    Args:
+    Inputs:
         cfg: The main configuration object.
         d: A dictionary containing raw data like 'stormInfo', 'normTEC', etc.
 
@@ -321,7 +320,7 @@ def make_storm_loaders(cfg: dict, d: dict) -> dict:
     return storm_loaders
 #=========================================================================
 
-# Dataloaders for C1PG comparison periods
+# Dataloaders for C1PG comparison periods (For the future updates for C1PG baseline comparison)
 #=========================================================================
 @register_exp("c1pg_comparison")
 def make_c1pg_loaders(cfg: Any, d: Dict) -> Dict[str, DataLoader]:
@@ -330,7 +329,7 @@ def make_c1pg_loaders(cfg: Any, d: Dict) -> Dict[str, DataLoader]:
     Creates DataLoaders for specific C1PG comparison periods, which include
     solar descending, low activity, and high activity phases.
 
-    Args:
+    Inputs:
         cfg: The main configuration object.
         d: The dictionary returned by prepare_raw() containing the full dataset.
 

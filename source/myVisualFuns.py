@@ -1,8 +1,15 @@
 
-
-# Libraries
+#############################################################
+"""
+myVisualFuns.py
+@ Mert-chan 
+@ 13 July 2025 (Last Modified)  
+- Animations functions for visualizing prediction results and GIM data.
+"""
 #############################################################
 
+# Libraries
+#===============================================================================
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np
@@ -13,12 +20,14 @@ import cartopy.feature as cfeature
 from pathlib import Path
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from source.myDataFuns import reverseHeliocentricSingle
-
-# Default meshgrid for TEC maps
 #===============================================================================
-x = np.arange(-180, 180, 5)           # X axis (Longitude) Delete last element to get 72 elements
-y = np.arange(90, -90, -2.5)        # Y axis (Latitude) Add first element to get 72 elements
-X, Y = np.meshgrid(x, y)              # Create a meshgrid
+
+
+# Default meshgrid for TEC maps (For reference)
+#===============================================================================
+# x = np.arange(-180, 180, 5)           # X axis (Longitude) Delete last element to get 72 elements
+# y = np.arange(90, -90, -2.5)          # Y axis (Latitude) Add first element to get 72 elements 
+# X, Y = np.meshgrid(x, y)              # Create a meshgrid
 #===============================================================================
 
 # Function to compare two TEC data sets and create an animation
@@ -33,7 +42,7 @@ def makeComparison_Anim(
                         show_metrics=True,
                         save=False,
                         dpi=120,
-                        save_dir=None  # NEW: Allow custom save directory
+                        save_dir=None 
                         ):
     """
     Create a styled TEC data animation matching the rectangular map style.
@@ -50,25 +59,24 @@ def makeComparison_Anim(
         - save_dir: Directory to save the GIF (default: ./visuals/).
     """
     plt.style.use('dark_background')
-    
-    # Coordinates
-    _ , lat_size, lon_size = data1.shape
+
+    # Generate lon/lat mesh
+    _, lat_size, lon_size = data1.shape
     lon = np.linspace(-180, 180, lon_size, endpoint=False)
     lat = np.linspace(90, -90, lat_size)
     Lon, Lat = np.meshgrid(lon, lat)
-    
-    # FIXED: Calculate consistent color scale from ALL data
+
+    # Set color scale across all data
     vmin = np.nanmin([np.nanmin(data1), np.nanmin(data2)])
     vmax = np.nanmax([np.nanmax(data1), np.nanmax(data2)])
-    
-    # Plot settings
-    plt.rcParams.update({'font.size': 15})  # Increase base font size
+
+    plt.rcParams.update({'font.size': 15})
     fig, axs = plt.subplots(1, 2, figsize=(12, 4),
                             subplot_kw={'projection': ccrs.PlateCarree()},
                             gridspec_kw={'wspace': 0.15, 'hspace': 0.05},
                             constrained_layout=False)
-    
-    # FIXED: Create initial plots with consistent color scale
+
+    # Axis styling (ticks, coastlines, borders)
     def _style_axes(ax, show_y_labels=True):
         ax.set_global()
         ax.coastlines(resolution='110m', linewidth=1.0)
@@ -79,112 +87,97 @@ def makeComparison_Anim(
         ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{int(x)}°'))
         ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda y, _: f'{int(y)}°' if show_y_labels else ''))
         ax.tick_params(axis='both', which='major', labelsize=11)
-        
-        # make ticks bold
         for tl in ax.get_xticklabels() + ax.get_yticklabels():
             tl.set_fontweight('bold')
-    
-    # Style axes
+
     for i, ax in enumerate(axs):
         _style_axes(ax, show_y_labels=(i == 0))
-    
-    # FIXED: Create initial pcolormesh plots with consistent color scale
+
+    # Initial frame
     im1 = axs[0].pcolormesh(Lon, Lat, data1[0], transform=ccrs.PlateCarree(),
-                           cmap=cmap, shading='auto', vmin=vmin, vmax=vmax)
+                            cmap=cmap, shading='auto', vmin=vmin, vmax=vmax)
     im2 = axs[1].pcolormesh(Lon, Lat, data2[0], transform=ccrs.PlateCarree(),
-                           cmap=cmap, shading='auto', vmin=vmin, vmax=vmax)
-    
-    # FIXED: Create colorbar once and keep it fixed
+                            cmap=cmap, shading='auto', vmin=vmin, vmax=vmax)
+
+    # Shared colorbar
     cb_ax = inset_axes(axs[-1], width="3%", height="110%", loc='center left',
-                      bbox_to_anchor=(1.05, -0.1, 1, 1.2), bbox_transform=axs[-1].transAxes)
+                       bbox_to_anchor=(1.05, -0.1, 1, 1.2), bbox_transform=axs[-1].transAxes)
     cb = fig.colorbar(im2, cax=cb_ax, orientation='vertical')
     cb.set_label("TECU (10$^{16}$ e/m$^2$)", fontsize=12, fontweight='bold')
     cb.ax.tick_params(labelsize=12)
-    
-    # FIXED: Explicitly set colorbar limits to prevent shifting
     cb.mappable.set_clim(vmin, vmax)
-    
-    # Create initial titles
+
+    # Main title with optional metrics
     main_title = f"{titles.get('main')}\n{date_list[0]:%Y-%m-%d %H:%M}"
     if show_metrics:
         rmse = np.sqrt(np.mean((data1[0] - data2[0]) ** 2))
         r2 = r2_score(data1[0].ravel(), data2[0].ravel())
         main_title += f"\nRMSE = {rmse:.4f}  |  R² = {r2:.4f}"
     main_title_obj = fig.suptitle(main_title, fontsize=14, fontweight='bold', y=0.95)
-    
-    # Store title objects for updating
-    title1 = axs[0].set_title(titles.get('subplot1', 'Real VTEC IGS'), pad=6, fontsize=12, fontweight='bold')
-    title2 = axs[1].set_title(titles.get('subplot2', 'Predicted VTEC IGS'), pad=6, fontsize=12, fontweight='bold')
 
+    # Static subplot titles
+    axs[0].set_title(titles.get('subplot1', 'Real VTEC IGS'), pad=6, fontsize=12, fontweight='bold')
+    axs[1].set_title(titles.get('subplot2', 'Predicted VTEC IGS'), pad=6, fontsize=12, fontweight='bold')
+
+    # Frame update logic
     def _update(frame):
-        """Update function for animation frames"""
         z1, z2 = data1[frame], data2[frame]
-        
-        # FIXED: Clear and recreate plots (necessary for cartopy) with fixed color scale
+
         for i, ax in enumerate(axs):
             ax.clear()
             _style_axes(ax, show_y_labels=(i == 0))
-        
-        # Recreate pcolormesh with fixed color scale
+
         im1_new = axs[0].pcolormesh(Lon, Lat, z1, transform=ccrs.PlateCarree(),
-                                   cmap=cmap, shading='auto', vmin=vmin, vmax=vmax)
+                                    cmap=cmap, shading='auto', vmin=vmin, vmax=vmax)
         im2_new = axs[1].pcolormesh(Lon, Lat, z2, transform=ccrs.PlateCarree(),
-                                   cmap=cmap, shading='auto', vmin=vmin, vmax=vmax)
-        
-        # Calculate metrics if requested
-        metrics_text = ""
+                                    cmap=cmap, shading='auto', vmin=vmin, vmax=vmax)
+
         if show_metrics:
             rmse = np.sqrt(np.mean((z1 - z2) ** 2))
             r2 = r2_score(z1.ravel(), z2.ravel())
             metrics_text = f"\nRMSE = {rmse:.4f}  |  R² = {r2:.4f}"
-        
-        # Update titles
+        else:
+            metrics_text = ""
+
         date_str = date_list[frame].strftime('%Y-%m-%d %H:%M')
-        
-        # Main title
         main_title_obj.set_text(f"{titles.get('main', 'TEC Data Comparison')}\n{date_str}{metrics_text}")
-        
-        # Subplot titles (keep them static)
+
         axs[0].set_title(titles.get('subplot1', 'Real VTEC IGS'), pad=6, fontsize=12, fontweight='bold')
-        axs[1].set_title(titles.get('subplot2', 'Longitude-Shifted VTEC IGS'), pad=6, fontsize=12, fontweight='bold')
-        
+        axs[1].set_title(titles.get('subplot2', 'Predicted VTEC IGS'), pad=6, fontsize=12, fontweight='bold')
+
         return [im1_new, im2_new]
-    
+
     plt.subplots_adjust(left=0.05, right=0.90, bottom=0.05, top=0.85, wspace=0.15)
-    
+
     # Create animation
     anim = animation.FuncAnimation(fig, _update,
                                    frames=len(date_list),
                                    interval=interval_ms,
                                    blit=False,
                                    repeat=True)
-    
-    # Don't close the figure immediately if we want to display it
+
+    # Show or save
     if not save:
         plt.show()
     else:
-        plt.close(fig)  # Close the figure to prevent display in Jupyter
-    
-    # FIXED: Better save directory handling
-    if save:
+        plt.close(fig)
         if save_dir is None:
             save_dir = Path("visuals")
         else:
             save_dir = Path(save_dir)
-        
         save_dir.mkdir(parents=True, exist_ok=True)
-        
         date_str = date_list[0].strftime('%Y%m%d_%H%M')
         title_key = titles.get('main', 'comparison').replace(" ", "_").replace(":", "").replace("/", "_")
         fname = f"{title_key}_{date_str}.gif"
         out_path = save_dir / fname
-        
         print(f"Saving → {out_path}")
         anim.save(out_path, writer='pillow', dpi=dpi)
 
     return anim
-#############################################################
+#===============================================================================
 
+# Function to create an animation comparing storm predictions with ground truth data using 
+#=================================================================================
 def spatialComparison_Anim(
     npz_path,
     dataDict,
@@ -373,3 +366,4 @@ def spatialComparison_Anim(
         anim.save(out_path, writer='pillow', dpi=dpi)
 
     return anim
+#=================================================================================

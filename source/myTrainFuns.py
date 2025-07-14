@@ -1,6 +1,10 @@
 #####################################################################
-"""20 Feb 2025 - Mert"""
-
+"""
+myTrainFuns.py
+@ Mert-chan 
+@ 13 July 2025 (Last Modified)  
+- Training and Testing Functions for IonoBench
+"""
 # User Defined Functions
 #===============================================================================
 from myDataFuns import *
@@ -8,7 +12,7 @@ from myDataFuns import *
 
 # Import Libraries
 #===============================================================================
-import os,glob
+import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -18,11 +22,8 @@ import datetime
 from tqdm import tqdm
 from sklearn.metrics import r2_score
 import plotly.graph_objects as go
-import pytorch_warmup as warmup
 import torch.distributed as dist
-from filelock import FileLock
 from skimage.metrics import structural_similarity as ssim
-from torch.utils.data import DataLoader, DistributedSampler
 import datetime
 import shutil
 #===============================================================================
@@ -43,7 +44,8 @@ def seedME(seed):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 #===============================================================================
-seedME(3)  # Seed everything for reproducibility (Why 3? My fav num :D )
+seedME(3)  
+
 
 # Function to initialize model weights
 #===============================================================================
@@ -70,12 +72,12 @@ def initialize_model_weights(m, method = 'kaiming', bias = 'constant'):
                     layer.bias.data.fill_(0.01)
 #===============================================================================
 
+# Function to check if distributed training is active (DDP)
 #==============================================================================
 def is_dist_active():
     """Check if torch.distributed is initialized."""
     return dist.is_available() and dist.is_initialized()
 #===============================================================================
-
 
 
 # If DDP (Multi-GPU) training, remove the 'module.' to use for single GPU testing
@@ -180,7 +182,7 @@ class TECspatiotemporalLoader(torch.utils.data.Dataset):
                 [Input Sequence]                      [Prediction Horizon]
     TEC:   [ D-23 | D-22 | ... | D-12 ]   →   [ D-11 | D-10 | ... | D₀ ] ← Target Date
             ←──────────────┬──────────────→   ←────────┬────────────→
-                            |                              |
+                           |                           |
                     Used for Input                  Used for Prediction Target
     D₀ is picked as last prediction step because it is the most challenging one. So most valuable to balance.
     Notes:
@@ -245,7 +247,7 @@ class IonoTester:
             print('Testing the model...\n')
         self.model.eval()
 
-        # --- Setup for incremental metrics and raw data saving ---
+        # Setup for incremental metrics and raw data saving
         num_horizons = self.config.data.pred_horz
         metric_lists = {
             'rmse': [], 'r2': [], 'ssim': [],
@@ -410,6 +412,7 @@ def get_latest_test_log(session_dir: Path) -> Path:
 # Solar Intensity Analysis
 #===============================================================================
 class SolarAnalysis:
+    """Performs a detailed analysis of the model's performance on IonoBench's test set according to solar intensity classes, using pre-built DataLoaders.    """
     _MAP = {
         "very_weak": "Very Weak",
         "weak":      "Weak",
@@ -544,15 +547,7 @@ class SolarAnalysis:
 #===============================================================================
 class StormAnalysis:
     """
-    Performs a detailed analysis of the model's performance on specific
-    geomagnetic storms, using pre-built DataLoaders.
-
-    Example
-    -------
-    # from scripts.data import create_storm_loaders
-    # storm_loaders = create_storm_loaders(cfg, raw_data)
-    # sa = StormAnalysis(model, raw_data, cfg, storm_loaders, device="cuda:0")
-    # res = sa.run()
+    Performs a detailed analysis of the model's performance on IonoBench's geomagnetic storms, using pre-built DataLoaders.
     """
     def __init__(self,
                  model,

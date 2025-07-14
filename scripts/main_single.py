@@ -1,34 +1,36 @@
-'''
+#####################################################################
+"""
 main_single.py
-Mert-chan 16 Feb 2025
-Single-GPU (or CPU) version for model trainings
-For different models,
-    1- Change yaml file path line  " config_dict = load_config("/usr1/home/s124mdg45_01/Projects/PhD/Ionosphere/Python/IonoBench/configs/SimVP.yaml")  # Load YAML config file FIX HERE"
-    2- model = ... line in the main() function
-'''
+@ Mert-chan 
+@ 13 July 2025 (Last Modified)(In development for future updates) 
+- Single-GPU (or CPU) version for model trainings
+"""
+#####################################################################
 
-import os
+# Libraries
+#=====================================================================
 import torch
 import numpy as np
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
-
-# 1) Import your configs and data loading
 from loadConfigs import *
 from data import load_training_data
 from source.myDataFuns import SI_categorize
 from source.models.SwinLSTM import SwinLSTM_B
 from source.models.SimVPv2 import SimVPv2_Model
 from source.models.DCNN121 import DCNN121
-from Projects.IonoBenchv1.source.myTrainFuns import *
+from source.myTrainFuns import *
+#=====================================================================
 
-
+'''
+# Main function
+#======================================================================
 def main():
     seedME(3)  # Seed everything for reproducibility
-    print("Starting main() (non-DDP version)...")
+    print("Starting main() (Single GPU version)...")
     torch.cuda.empty_cache()  # Clear CUDA cache 
-    ########################################
+
     # 1) Device config 
     #===============================================================================
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -131,3 +133,5 @@ def main():
 if __name__ == "__main__":
     main()
     ############################
+
+'''

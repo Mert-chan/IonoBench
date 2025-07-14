@@ -1,8 +1,24 @@
+#####################################################################
+"""
+SwinLSTM_modules.py         
+@ Mert-chan 
+13 July 2025 (Last Modified)
+- SwinLSTM helper modules taken from https://github.com/SongTang-x/SwinLSTM/blob/main/SwinLSTM_B.py from original Source code.
+- Includes modifications
+"""
+######################################################################
+
+# Libraries
+#=========================================================================
 import torch
 import torch.nn as nn
 from timm.models.swin_transformer import SwinTransformerBlock,  window_reverse, PatchEmbed, PatchMerging, window_partition
 from timm.layers import to_2tuple
+#==========================================================================
 
+
+# SwinLSTM Cell
+#=================================================================
 class SwinLSTMCell(nn.Module):
     def __init__(self, dim, input_resolution, num_heads, window_size, depth,
                  mlp_ratio=4., qkv_bias=True, proj_drop=0., attn_drop=0.,
@@ -57,6 +73,8 @@ class SwinLSTMCell(nn.Module):
 
         return Ht, (Ht, Ct)
 
+# Swin Transformer Block
+#==========================================================================
 class STB(SwinTransformerBlock):
     def __init__(self, index, dim, input_resolution, depth, num_heads, window_size, 
                  mlp_ratio=4., qkv_bias=True, proj_drop=0., attn_drop=0., 
@@ -122,7 +140,10 @@ class STB(SwinTransformerBlock):
         x = x + self.drop_path2(self.mlp(self.norm2(x)))
 
         return x
-        
+#===========================================================================
+
+# Patch Inflating Layer
+#===========================================================================        
 class PatchInflated(nn.Module):
     r""" Tensor to Patch Inflating
 
@@ -154,7 +175,8 @@ class PatchInflated(nn.Module):
         x = self.Conv(x)
 
         return x
-       
+
+#===========================================================================
 class PatchExpanding(nn.Module):
     r""" Patch Expanding Layer.
 
@@ -184,7 +206,10 @@ class PatchExpanding(nn.Module):
         x = self.norm(x)
 
         return x
+#===========================================================================
 
+# UpSample and DownSample modules
+#=========================================================================
 class UpSample(nn.Module):
     def __init__(self, img_size, patch_size, in_chans, embed_dim, depths_upsample, num_heads, window_size, mlp_ratio=4.,
                  qkv_bias=True, proj_drop=0., attn_drop_rate=0., drop_path_rate=0.1,
@@ -286,7 +311,10 @@ class DownSample(nn.Module):
             hidden_states_down.append(hidden_state)
 
         return hidden_states_down, x
+#===========================================================================
 
+# STconvert module
+#===========================================================================
 class STconvert(nn.Module): 
     def __init__(self, img_size, patch_size, in_chans, embed_dim, depths, num_heads, 
                  window_size, mlp_ratio=4., qkv_bias=True, proj_drop=0., 
@@ -319,3 +347,4 @@ class STconvert(nn.Module):
         x = torch.sigmoid(self.patch_inflated(x))
         
         return x, hidden_state
+#===========================================================================

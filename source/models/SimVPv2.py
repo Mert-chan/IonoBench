@@ -1,17 +1,28 @@
+#####################################################################
+"""
+SimVPv2.py         
+@ Mert-chan 
+13 July 2025 (Last Modified)
+- Simple Video Prediction v2 (SimVPv2) model adopted from:
+    - SimVPv2: Towards Simple yet Powerful Spatiotemporal Predictive Learning https://arxiv.org/abs/2211.12509v4
+    - OpenSTL: A Comprehensive Benchmark of Spatio-Temporal Predictive Learning https://arxiv.org/abs/2306.11249v2
+- Modified for IonoBench's input/output format.
+"""
+######################################################################
+
+
+# Libs
+#===================================================================
 import math
 import torch
 import torch.nn as nn
-
 from timm.layers import DropPath, trunc_normal_
 from scripts.registry import register_model
+#===================================================================
+
 @register_model("SimVPv2")          
 class SimVPv2_Model(nn.Module):
-    r"""SimVP Model
-
-    Implementation of `SimVP: Simpler yet Better Video Prediction
-    <https://arxiv.org/abs/2206.05099>`_.
-
-    """
+    r"""SimVP Model"""
     def __init__(self, config):
         """
         Initialize SimVPv2_Model using a configuration object.
@@ -27,7 +38,8 @@ class SimVPv2_Model(nn.Module):
         # Set up model parameters from config
         self.enc = Encoder(C, config.hid_S, config.N_S, config.spatio_kernel_enc, act_inplace=False)
         self.dec = Decoder(config.hid_S, C, config.N_S, config.spatio_kernel_dec, act_inplace=False)
-        
+         
+        # GSTa is used which is introduced in SimVPv2 paper: SimVPv2: Towards Simple yet Powerful Spatiotemporal Predictive Learning https://arxiv.org/abs/2211.12509v4
         model_type = 'gsta' if config.model_type is None else config.model_type.lower()
         if model_type == 'incepu':
             self.hid = MidIncepNet(T * config.hid_S, config.hid_T, config.N_T)
@@ -44,7 +56,7 @@ class SimVPv2_Model(nn.Module):
             kernel_size=config.conv_kernel_size, 
             stride=config.conv_stride
         )
-
+    # Modification to the forward method to adapt IonoBench's input/output format
     def forward(self, x_raw, truthMaps):
         x_raw = x_raw.permute(0, 2, 1, 3, 4).contiguous()  # B, C, T, H, W → B, T, C, H, W
         B, T, C, H, W = x_raw.shape
@@ -64,12 +76,20 @@ class SimVPv2_Model(nn.Module):
         loss = self.criterion(out, truthMaps)
         return out, loss
 
+
+
+# Rest is the modules from SimVPv2 paper
+
+# Helper function to generate sampling pattern
+#===================================================================
 def sampling_generator(N, reverse=False):
     samplings = [False, True] * (N // 2)
     if reverse: return list(reversed(samplings[:N]))
     else: return samplings[:N]
+#===================================================================
 
-
+# Encoder and Decoder classes for SimVPv2
+#===================================================================
 class Encoder(nn.Module):
     """3D Encoder for SimVP"""
 
@@ -112,7 +132,10 @@ class Decoder(nn.Module):
         Y = self.readout(Y)
         return Y
 
+#====================================================================
 
+# Translators
+#====================================================================
 class MidIncepNet(nn.Module):
     """The hidden Translator of IncepNet for SimVPv1"""
 
@@ -227,7 +250,10 @@ class MidMetaNet(nn.Module):
         y = z.reshape(B, T, C, H, W)
         return y
     
+#=====================================================================
 
+# Basic Conv Layers
+#======================================================================
 class BasicConv2d(nn.Module):
 
     def __init__(self,
@@ -321,7 +347,10 @@ class GroupConv2d(nn.Module):
             y = self.activate(self.norm(y))
         return y
 
+#======================================================================
 
+# More translators
+#======================================================================
 class gInception_ST(nn.Module):
     """A IncepU block for SimVP"""
 
@@ -487,3 +516,4 @@ class MixMlp(nn.Module):
         x = self.fc2(x)
         x = self.drop(x)
         return x
+    #======================================================================

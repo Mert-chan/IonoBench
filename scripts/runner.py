@@ -1,7 +1,23 @@
+#####################################################################
+"""
+runner.py
+@ Mert-chan 
+13 July 2025 (Last Modified) (In development for future CLI updates)
+- Runner class that will be used by the CLI to run experiments
+"""
+#####################################################################
+
+
+# Libraries
+#====================================================================
 import torch
 from scripts.registry import MODEL_REGISTRY
 from scripts.optim import *
+#====================================================================
 
+
+# Runner class that will be used by the CLI
+#====================================================================
 class Runner:
     def __init__(self, cfg):
         self.cfg = cfg
@@ -20,3 +36,4 @@ class Runner:
 
     def train(self): ...
     def test(self):  ...
+#====================================================================
