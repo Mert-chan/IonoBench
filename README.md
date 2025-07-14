@@ -18,11 +18,11 @@ Click **Open in Colab** to test without local setup.
 
 ### Features
 - Supports **multichannel spatiotemporal models** for multistep 24-hour input → 24-hour output setup
-- Stratified and chronological TEC datasets
+- Stratified and chronological datasets (Preprocessed GIMs and auxiliary parameters)
 - Model registry and configuration system
 - Pretrained model download via Hugging Face
 - Solar-balanced and storm-aware evaluation experiments
-- Colab tutorial for quick testing
+- Tutorials for Colab and local setups.
 
 ---
 
