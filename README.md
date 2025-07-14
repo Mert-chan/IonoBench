@@ -11,7 +11,16 @@
 
 **IonoBench** is a benchmark framework for evaluating deep spatiotemporal models on Global Ionospheric Map (GIM) forecasting.  
 It includes standardized datasets, evaluation protocols, pretrained models, and configuration-based experimentation.
-  
+
+### Overall Performance on IonoBench Test Set
+| Model       | RMSE (↓)       | R² (↑)         | SSIM (↑)       |
+|-------------|----------------|----------------|----------------|
+| **SimVPv2** | **2.25 ± 1.35** | **0.962 ± 0.015** | **0.969 ± 0.020** |
+| DCNN121     | 2.62 ± 1.66     | 0.950 ± 0.023     | 0.963 ± 0.025     |
+| SwinLSTM    | 2.66 ± 1.49     | 0.946 ± 0.020     | 0.960 ± 0.023     |
+| IRI 2020    | 6.39 ± 4.53     | 0.720 ± 0.109     | 0.852 ± 0.043     |
+
+
 Click **Open in Colab** to test without local setup.
 
 ---
@@ -46,7 +55,7 @@ Click **Open in Colab** to test without local setup.
 # Clone repository
 git clone https://github.com/Mert-chan/IonoBench.git
 ```
-```base
+```bash
 # Change your directory
 cd IonoBench
 ```
