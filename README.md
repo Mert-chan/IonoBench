@@ -9,8 +9,7 @@
 
 ---
 
-**IonoBench** is a benchmark framework for evaluating deep spatiotemporal models on Global Ionospheric Map (GIM) forecasting.  
-It includes standardized datasets, evaluation protocols, pretrained models, and configuration-based experimentation.
+This project is a benchmark framework for evaluating deep spatiotemporal models on Global Ionospheric Map (GIM) forecasting. The framework provides standardized datasets, evaluation protocols, pretrained models, and configuration-based experimentation.
 
 ### Overall Performance on IonoBench Test Set
 | Model       | RMSE (↓)       | R² (↑)         | SSIM (↑)       |
