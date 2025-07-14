@@ -5,11 +5,11 @@
 [![Hugging Face Models](https://img.shields.io/badge/HF%20Models-IonoBench-blue?logo=huggingface)](https://huggingface.co/Mertjhan/IonoBench)
 
 **IonoBench**: Evaluating Spatiotemporal Models for Ionospheric Forecasting under Solar-Balanced and Storm-Aware Conditions  
-*Accepted in Remote Sensing (MDPI), Special Issue on Ionosphere and Space Weather*
+*Accepted in Remote Sensing (MDPI)*
 
 ---
 
-**IonoBench** is a benchmark framework for evaluating deep spatiotemporal models on global Total Electron Content (TEC) forecasting.  
+**IonoBench** is a benchmark framework for evaluating deep spatiotemporal models on Global Ionospheric Map (GIM) forecasting.  
 It includes standardized datasets, evaluation protocols, pretrained models, and configuration-based experimentation.
   
 Click **Open in Colab** to test without local setup.
@@ -17,12 +17,12 @@ Click **Open in Colab** to test without local setup.
 ---
 
 ### Features
-
-- Stratified and chronological TEC datasets
+- Supports **multichannel spatiotemporal models** for multistep 24-hour input → 24-hour output setup
+- Stratified and chronological datasets (Preprocessed GIMs and auxiliary parameters)
 - Model registry and configuration system
 - Pretrained model download via Hugging Face
 - Solar-balanced and storm-aware evaluation experiments
-- Colab tutorial for quick testing
+- Tutorials for Colab and local setups.
 
 ---
 
@@ -33,25 +33,33 @@ Click **Open in Colab** to test without local setup.
 | HF model & data access | Complete    |
 | Model/config registry  | Complete    |
 | Evaluation pipeline    | Complete    |
-| Visualization tools    | In Progress |
-| CLI support            | Planned     |
+| Visualization tools    | Complete    |
+| CLI support            | In Progress |
 | Training tutorials     | Planned     |
 | Contributor guide      | Planned     |
 
 ---
 
-### Local Setup (Python 3.11 + CUDA)
+### Local Setup 
 
+```bash
+# Clone repository
+git clone https://github.com/Mert-chan/IonoBench.git
+```
+```base
+# Change your directory
+cd IonoBench
+```
 ```bash
 # Create environment
 conda create -n ionobench python=3.11 -y
 conda activate ionobench
-
+```
+```bash
 # Install dependencies
 pip install -r requirements.txt
-
 ```
-
-This environment uses `torch==2.5.1`, which requires a compatible CUDA build.  
-PyTorch provides separate wheels for each CUDA version (e.g., `+cu118`, `+cu121`, `+cu124`).  
-Make sure your NVIDIA driver supports the CUDA version included in the installed wheel.  
+> **Tested on**: Python 3.11.13 · PyTorch 2.5.1 · CUDA 12.4  
+> The environment uses `torch==2.5.1`, which requires a compatible CUDA build.  
+> PyTorch provides separate wheels for each CUDA version (e.g., `+cu118`, `+cu121`, `+cu124`).  
+> Ensure your NVIDIA driver supports the CUDA version used in the installed wheel.
