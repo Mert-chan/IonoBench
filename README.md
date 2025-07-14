@@ -5,7 +5,7 @@
 [![Hugging Face Models](https://img.shields.io/badge/HF%20Models-IonoBench-blue?logo=huggingface)](https://huggingface.co/Mertjhan/IonoBench)
 
 **IonoBench**: Evaluating Spatiotemporal Models for Ionospheric Forecasting under Solar-Balanced and Storm-Aware Conditions  
-*Accepted in Remote Sensing (MDPI), Special Issue on Ionosphere and Space Weather*
+*Accepted in Remote Sensing (MDPI)*
 
 ---
 
