@@ -79,10 +79,10 @@ pip install -r requirements.txt
 
 If you use **IonoBench** in your research, please cite:
 
-Turkmen, M.C.; Lee, Y.H.; Tan, E.L.  
-*IonoBench: Evaluating Spatiotemporal Models for Ionospheric Forecasting Under Solar-Balanced and Storm-Aware Conditions.*  
-**Remote Sensing**, 2025, 17(15), 2557.  
-https://doi.org/10.3390/rs17152557
+> Turkmen, M.C.; Lee, Y.H.; Tan, E.L.  
+> *IonoBench: Evaluating Spatiotemporal Models for Ionospheric Forecasting Under Solar-Balanced and Storm-Aware Conditions.*  
+> **Remote Sensing**, 2025, 17(15), 2557.   
+> https://doi.org/10.3390/rs17152557
 
 **BibTeX:**
 ```bibtex
