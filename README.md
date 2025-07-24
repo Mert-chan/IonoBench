@@ -1,12 +1,12 @@
 # IonoBench
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Mert-chan/IonoBench/blob/main/tutorial/colab_version.ipynb?flush_cache=true)
-[![Paper (MDPI Remote Sensing)](https://img.shields.io/badge/Paper-Remote%20Sensing-green?logo=readthedocs)](https://doi.org/10.3390/rs17152557)
+[![Paper](https://img.shields.io/badge/DOI-10.3390%2Frs17152557-ff6f00?logo=doi&logoColor=white)](https://doi.org/10.3390/rs17152557)
 [![Hugging Face Dataset](https://img.shields.io/badge/HF%20Datasets-IonoBench-blue?logo=huggingface)](https://huggingface.co/datasets/Mertjhan/IonoBench)
 [![Hugging Face Models](https://img.shields.io/badge/HF%20Models-IonoBench-blue?logo=huggingface)](https://huggingface.co/Mertjhan/IonoBench)
 
 **IonoBench**: Evaluating Spatiotemporal Models for Ionospheric Forecasting under Solar-Balanced and Storm-Aware Conditions  
-*Accepted in Remote Sensing (MDPI)*
+*Published in Remote Sensing (MDPI)*
 
 ---
 
@@ -72,3 +72,17 @@ pip install -r requirements.txt
 > The environment uses `torch==2.5.1`, which requires a compatible CUDA build.  
 > PyTorch provides separate wheels for each CUDA version (e.g., `+cu118`, `+cu121`, `+cu124`).  
 > Ensure your NVIDIA driver supports the CUDA version used in the installed wheel.
+
+If you use IonoBench in your research, please cite:
+Turkmen, M.C.; Lee, Y.H.; Tan, E.L. IonoBench: Evaluating Spatiotemporal Models for Ionospheric Forecasting Under Solar-Balanced and Storm-Aware Conditions. Remote Sens. 2025, 17, 2557. https://doi.org/10.3390/rs17152557
+BibTeX:
+@article{Ionobench2025,
+  title   = {IonoBench: Evaluating Spatiotemporal Models for Ionospheric Forecasting under Solar-Balanced and Storm-Aware Conditions},
+  author  = {Turkmen, M.C.; Lee, Y.H.; Tan, E.L.},
+  journal = {Remote Sensing},
+  year    = {2025},
+  volume  = {17},
+  number  = {15},
+  pages   = {2557},
+  doi     = {10.3390/rs17152557}
+}
