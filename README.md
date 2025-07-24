@@ -1,9 +1,9 @@
 # IonoBench
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Mert-chan/IonoBench/blob/main/tutorial/colab_version.ipynb?flush_cache=true)
-[![Paper](https://img.shields.io/badge/DOI-10.3390%2Frs17152557-ff6f00?logo=doi&logoColor=white)](https://doi.org/10.3390/rs17152557)
-[![Hugging Face Dataset](https://img.shields.io/badge/HF%20Datasets-IonoBench-blue?logo=huggingface)](https://huggingface.co/datasets/Mertjhan/IonoBench)
-[![Hugging Face Models](https://img.shields.io/badge/HF%20Models-IonoBench-blue?logo=huggingface)](https://huggingface.co/Mertjhan/IonoBench)
+[![Open In Colab](https://img.shields.io/badge/Open%20in-Colab-525252?logo=googlecolab&logoColor=white)](https://colab.research.google.com/github/Mert-chan/IonoBench/blob/main/tutorial/colab_version.ipynb?flush_cache=true)
+[![Paper](https://img.shields.io/badge/Paper-Remote%20Sensing-2d7d9a?logo=readthedocs&logoColor=white)](https://doi.org/10.3390/rs17152557)
+[![HF Datasets](https://img.shields.io/badge/HF%20Datasets-IonoBench-faa659?logo=huggingface&logoColor=white)](https://huggingface.co/datasets/Mertjhan/IonoBench)
+[![HF Models](https://img.shields.io/badge/HF%20Models-IonoBench-faa659?logo=huggingface&logoColor=white)](https://huggingface.co/Mertjhan/IonoBench)
 
 **IonoBench**: Evaluating Spatiotemporal Models for Ionospheric Forecasting under Solar-Balanced and Storm-Aware Conditions  
 *Published in Remote Sensing (MDPI)*
