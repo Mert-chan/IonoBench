@@ -1,7 +1,7 @@
 # IonoBench
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Mert-chan/IonoBench/blob/main/tutorial/colab_version.ipynb?flush_cache=true)
-[![Paper](https://img.shields.io/badge/Paper-Remote%20Sensing-2d7d9a?logo=readthedocs&logoColor=white)](https://doi.org/10.3390/rs17152557)
+[![Paper](https://img.shields.io/badge/Paper-Remote%20Sensing-blue?logo=readthedocs&logoColor=white)](https://doi.org/10.3390/rs17152557)
 [![HF Datasets](https://img.shields.io/badge/HF%20Datasets-IonoBench-blue?logo=huggingface)](https://huggingface.co/datasets/Mertjhan/IonoBench)
 [![HF Models](https://img.shields.io/badge/HF%20Models-IonoBench-blue?logo=huggingface)](https://huggingface.co/Mertjhan/IonoBench)
 
