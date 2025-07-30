@@ -1,16 +1,19 @@
-# IonoBench
+<p align="center">
+  <img src="visuals/IonoBench%20Logo.png" alt="IonoBench Logo" width="300"/>
+</p>
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Mert-chan/IonoBench/blob/main/tutorial/colab_version.ipynb?flush_cache=true)
-[![Hugging Face Dataset](https://img.shields.io/badge/HF%20Datasets-IonoBench-blue?logo=huggingface)](https://huggingface.co/datasets/Mertjhan/IonoBench)
-[![Hugging Face Models](https://img.shields.io/badge/HF%20Models-IonoBench-blue?logo=huggingface)](https://huggingface.co/Mertjhan/IonoBench)
+[![Paper](https://img.shields.io/badge/Paper-Remote%20Sensing-blue?logo=readthedocs&logoColor=white)](https://doi.org/10.3390/rs17152557)
+[![HF Datasets](https://img.shields.io/badge/HF%20Datasets-IonoBench-blue?logo=huggingface)](https://huggingface.co/datasets/Mertjhan/IonoBench)
+[![HF Models](https://img.shields.io/badge/HF%20Models-IonoBench-blue?logo=huggingface)](https://huggingface.co/Mertjhan/IonoBench)
+
 
 **IonoBench**: Evaluating Spatiotemporal Models for Ionospheric Forecasting under Solar-Balanced and Storm-Aware Conditions  
-*Accepted in Remote Sensing (MDPI)*
+*Published in Remote Sensing (MDPI)*
 
 ---
 
-**IonoBench** is a benchmark framework for evaluating deep spatiotemporal models on Global Ionospheric Map (GIM) forecasting.  
-It includes standardized datasets, evaluation protocols, pretrained models, and configuration-based experimentation.
+This project is a benchmark framework for evaluating deep spatiotemporal models on Global Ionospheric Map (GIM) forecasting. The framework provides standardized datasets, evaluation protocols, pretrained models, and configuration-based experimentation.
 
 ### Overall Performance on IonoBench Test Set
 | Model       | RMSE (↓)       | R² (↑)         | SSIM (↑)       |
@@ -72,3 +75,26 @@ pip install -r requirements.txt
 > The environment uses `torch==2.5.1`, which requires a compatible CUDA build.  
 > PyTorch provides separate wheels for each CUDA version (e.g., `+cu118`, `+cu121`, `+cu124`).  
 > Ensure your NVIDIA driver supports the CUDA version used in the installed wheel.
+
+---
+### How to Cite
+
+If you use **IonoBench** in your research, please cite:
+
+Turkmen, M.C.; Lee, Y.H.; Tan, E.L.  
+*IonoBench: Evaluating Spatiotemporal Models for Ionospheric Forecasting Under Solar-Balanced and Storm-Aware Conditions.*  
+**Remote Sensing**, 2025, 17(15), 2557.
+https://doi.org/10.3390/rs17152557
+
+**BibTeX:**
+```bibtex
+@article{Ionobench2025,
+  title   = {IonoBench: Evaluating Spatiotemporal Models for Ionospheric Forecasting under Solar-Balanced and Storm-Aware Conditions},
+  author  = {Turkmen, M.C.; Lee, Y.H.; Tan, E.L.},
+  journal = {Remote Sensing},
+  year    = {2025},
+  volume  = {17},
+  number  = {15},
+  pages   = {2557},
+  doi     = {10.3390/rs17152557}
+}

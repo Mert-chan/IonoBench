@@ -58,3 +58,6 @@ test_output/
 *.gif
 *.mp4
 *.avi
+
+# Animation script for private usage
+tutorial/anim_private.ipynb

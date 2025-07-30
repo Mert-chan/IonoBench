@@ -61,10 +61,9 @@ def makeComparison_Anim(
     plt.style.use('dark_background')
 
     # Generate lon/lat mesh
-    _, lat_size, lon_size = data1.shape
-    lon = np.linspace(-180, 180, lon_size, endpoint=False)
-    lat = np.linspace(90, -90, lat_size)
-    Lon, Lat = np.meshgrid(lon, lat)
+    lon = np.arange(-180, 180, 5)           # X axis (Longitude) Delete last element to get 72 elements
+    lat = np.arange(90, -90, -2.5)          # Y axis (Latitude) Add first element to get 72 elements
+    Lon, Lat = np.meshgrid(lon, lat)              # Create a meshgrid
 
     # Set color scale across all data
     vmin = np.nanmin([np.nanmin(data1), np.nanmin(data2)])
@@ -82,10 +81,10 @@ def makeComparison_Anim(
         ax.coastlines(resolution='110m', linewidth=1.0)
         ax.add_feature(cfeature.BORDERS, linewidth=0.8, linestyle=':')
         ax.gridlines(draw_labels=False, color='gray', linewidth=0.75, alpha=0.3)
-        ax.set_xticks(np.arange(-180, 181, 60), crs=ccrs.PlateCarree())
-        ax.set_yticks(np.arange(-90, 91, 30), crs=ccrs.PlateCarree())
-        ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{int(x)}°'))
-        ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda y, _: f'{int(y)}°' if show_y_labels else ''))
+        ax.set_xticks(np.arange(-150, 151, 60), crs=ccrs.PlateCarree())
+        ax.set_yticks(np.arange(-60, 61, 30), crs=ccrs.PlateCarree())
+        ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{int(x)}°' if x >= 0 else f'−{int(abs(x))}°'))
+        ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda y, _: f'{int(y)}°' if y >= 0 else f'−{int(abs(y))}°'))
         ax.tick_params(axis='both', which='major', labelsize=11)
         for tl in ax.get_xticklabels() + ax.get_yticklabels():
             tl.set_fontweight('bold')
@@ -245,11 +244,9 @@ def spatialComparison_Anim(
     print(f"Prepared {len(animation_data)} frames")
 
     # setup grid
-    lat_n, lon_n = animation_data[0]['pred'].shape
-    lon = np.linspace(-180, 180, lon_n, endpoint=False)
-    lat = np.linspace(90, -90, lat_n)
-    Lon, Lat = np.meshgrid(lon, lat)
-
+    lon = np.arange(-180, 180, 5)           # X axis (Longitude) Delete last element to get 72 elements
+    lat = np.arange(90, -90, -2.5)          # Y axis (Latitude) Add first element to get 72 elements
+    Lon, Lat = np.meshgrid(lon, lat)              # Create a meshgrid
     # determine color ranges
     all_lbl = [f['label'] for f in animation_data]
     all_prd = [f['pred'] for f in animation_data]
@@ -271,10 +268,10 @@ def spatialComparison_Anim(
         ax.coastlines('110m', linewidth=1.0)
         ax.add_feature(cfeature.BORDERS, linewidth=0.8, linestyle=':')
         ax.gridlines(draw_labels=False, color='gray', linewidth=0.75, alpha=0.3)
-        ax.set_xticks(np.arange(-180, 181, 60), ccrs.PlateCarree())
-        ax.set_yticks(np.arange(-90, 91, 30), ccrs.PlateCarree())
-        ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{int(x)}°'))
-        ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda y, _: f'{int(y)}°' if first else ''))
+        ax.set_xticks(np.arange(-150, 151, 60), crs=ccrs.PlateCarree())
+        ax.set_yticks(np.arange(-60, 61, 30), crs=ccrs.PlateCarree())
+        ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{int(x)}°' if x >= 0 else f'−{int(abs(x))}°'))
+        ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda y, _: f'{int(y)}°' if y >= 0 else f'−{int(abs(y))}°'))
         ax.tick_params(axis='both', which='major', labelsize=11)
         for tl in ax.get_xticklabels() + ax.get_yticklabels():
             tl.set_fontweight('bold')
