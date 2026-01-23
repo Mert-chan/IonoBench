@@ -46,7 +46,7 @@ Click **Open in Colab** to test without local setup.
 | Model/config registry  | Complete    |
 | Evaluation pipeline    | Complete    |
 | Visualization tools    | Complete    |
-| CLI support            | In Progress |
+| CLI support            | Complete    |
 | Training tutorials     | Planned     |
 | Contributor guide      | Planned     |
 
@@ -75,6 +75,31 @@ pip install -r requirements.txt
 > The environment uses `torch==2.5.1`, which requires a compatible CUDA build.  
 > PyTorch provides separate wheels for each CUDA version (e.g., `+cu118`, `+cu121`, `+cu124`).  
 > Ensure your NVIDIA driver supports the CUDA version used in the installed wheel.
+
+---
+
+### Command Line Interface (CLI)
+
+Run experiments without notebooks:
+
+```bash
+# Download dataset
+python -m scripts.cli data --type stratified
+
+# Download model
+python -m scripts.cli model --name SimVPv2
+
+# Test on test set
+python -m scripts.cli test --model SimVPv2 --checkpoint training_sessions/SimVPv2/...pth --session-name test_run
+
+# Solar intensity analysis
+python -m scripts.cli solar --checkpoint training_sessions/SimVPv2/...pth --session-name solar_run --save-raw
+
+# Storm event analysis
+python -m scripts.cli storm --checkpoint training_sessions/SimVPv2/...pth --session-name storm_run --save-raw
+```
+
+For details: `python -m scripts.cli --help`
 
 ---
 ### How to Cite

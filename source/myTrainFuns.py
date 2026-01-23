@@ -7,7 +7,7 @@ myTrainFuns.py
 """
 # User Defined Functions
 #===============================================================================
-from myDataFuns import *
+from source.myDataFuns import *
 #===============================================================================
 
 # Import Libraries
