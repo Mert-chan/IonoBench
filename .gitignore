@@ -61,3 +61,4 @@ test_output/
 
 # Animation script for private usage
 tutorial/anim_private.ipynb
+tutorial/local_version_private.ipynb
