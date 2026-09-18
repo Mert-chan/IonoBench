@@ -58,7 +58,13 @@ test_output/
 *.gif
 *.mp4
 *.avi
+!visuals/storm_case.gif
+!visuals/quiet_case.gif
 
 # Animation script for private usage
 tutorial/anim_private.ipynb
 tutorial/local_version_private.ipynb
+
+
+/bne
+source/update.py

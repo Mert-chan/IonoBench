@@ -11,6 +11,16 @@
 **IonoBench**: Evaluating Spatiotemporal Models for Ionospheric Forecasting under Solar-Balanced and Storm-Aware Conditions  
 *Published in Remote Sensing (MDPI)*
 
+<p align="center">
+  <img src="visuals/storm_case.gif" alt="12-hour-ahead TEC forecasts and residuals of DCNN121, SwinLSTM and SimVPv2 during the 2001-11-06 geomagnetic storm" width="100%"/>
+  <br/>
+  <sub><b>Storm</b> (Dst −292 nT): 12-hour-ahead forecasts (top) and residuals (bottom), on unseen test samples.</sub>
+  <br/>
+  <img src="visuals/quiet_case.gif" alt="12-hour-ahead TEC forecasts and residuals of DCNN121, SwinLSTM and SimVPv2 during quiet conditions on 2001-06-12" width="100%"/>
+  <br/>
+  <sub><b>Quiet</b> (Dst +6 nT): same models and layout. Note the residual scale: ±15 TECU here vs. ±45 TECU during the storm.</sub>
+</p>
+
 ---
 
 This project is a benchmark framework for evaluating deep spatiotemporal models on Global Ionospheric Map (GIM) forecasting. The framework provides standardized datasets, evaluation protocols, pretrained models, and configuration-based experimentation.
@@ -29,26 +39,11 @@ Click **Open in Colab** to test without local setup.
 ---
 
 ### Features
-- Supports **multichannel spatiotemporal models** for multistep 24-hour input → 24-hour output setup
-- Stratified and chronological datasets (Preprocessed GIMs and auxiliary parameters)
-- Model registry and configuration system
-- Pretrained model download via Hugging Face
-- Solar-balanced and storm-aware evaluation experiments
-- Tutorials for Colab and local setups.
-
----
-
-### Framework Status
-
-| Component               | Status      |
-|------------------------|-------------|
-| HF model & data access | Complete    |
-| Model/config registry  | Complete    |
-| Evaluation pipeline    | Complete    |
-| Visualization tools    | Complete    |
-| CLI support            | Complete    |
-| Training tutorials     | Planned     |
-| Contributor guide      | Planned     |
+- Supports **multichannel spatiotemporal models** for multistep 24-hour input to 24-hour output setup
+- Includes stratified (blocked subsets balancing solar and geomagnetic representation for the models) and chronological datasets
+- Model registry and configuration system (for contributors adding new models)
+- Reproducible and pretrained models are available via Hugging Face (see [tutorial/](tutorial/))
+- Experiments for solar enforcing (increasing solar flux over different portions of the solar cycle) and storm behaviour for intense and superintense storms
 
 ---
 
@@ -73,8 +68,6 @@ pip install -r requirements.txt
 ```
 > **Tested on**: Python 3.11.13 · PyTorch 2.5.1 · CUDA 12.4  
 > The environment uses `torch==2.5.1`, which requires a compatible CUDA build.  
-> PyTorch provides separate wheels for each CUDA version (e.g., `+cu118`, `+cu121`, `+cu124`).  
-> Ensure your NVIDIA driver supports the CUDA version used in the installed wheel.
 
 ---
 
@@ -102,20 +95,14 @@ python -m scripts.cli storm --checkpoint training_sessions/SimVPv2/...pth --sess
 For details: `python -m scripts.cli --help`
 
 ---
-### How to Cite
 
-If you use **IonoBench** in your research, please cite:
+<details>
+<summary><b>Citation</b></summary>
 
-Turkmen, M.C.; Lee, Y.H.; Tan, E.L.  
-*IonoBench: Evaluating Spatiotemporal Models for Ionospheric Forecasting Under Solar-Balanced and Storm-Aware Conditions.*  
-**Remote Sensing**, 2025, 17(15), 2557.
-https://doi.org/10.3390/rs17152557
-
-**BibTeX:**
 ```bibtex
 @article{Ionobench2025,
   title   = {IonoBench: Evaluating Spatiotemporal Models for Ionospheric Forecasting under Solar-Balanced and Storm-Aware Conditions},
-  author  = {Turkmen, M.C.; Lee, Y.H.; Tan, E.L.},
+  author  = {Turkmen, M.C. and Lee, Y.H. and Tan, E.L.},
   journal = {Remote Sensing},
   year    = {2025},
   volume  = {17},
@@ -123,3 +110,5 @@ https://doi.org/10.3390/rs17152557
   pages   = {2557},
   doi     = {10.3390/rs17152557}
 }
+```
+</details>
